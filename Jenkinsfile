@@ -1,12 +1,12 @@
 pipeline {
   tools{
          maven 'maven_3_5_0'
-     }
+  }
   agent any
   stages {
     stage('Build Maven'){
       steps{
-          checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/phancanh25/testdocker']]])
+          checkout([$class: 'GitSCM', branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/phancanh25/testdocker']]])
           sh 'mvn clean install'
       }
     }
