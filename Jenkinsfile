@@ -1,35 +1,47 @@
 pipeline {
-  environment {
-//     dockerimagename = "250122/testdocker"
-    dockerImage = ""
-  }
+  tools{
+         maven 'maven_3_5_0'
+     }
   agent any
   stages {
-    stage('Checkout Source') {
-      steps {
-        git 'https://github.com/phancanh25/testdocker.git'
-      }
-    }
-    stage('Build image') {
+    stage('Build Maven'){
       steps{
-        script {
-          sh 'docker build -t 250122/testdocker:1.0 .'
-//           dockerImage = docker.build dockerimagename
-        }
+          checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/phancanh25/testdocker']]])
+          sh 'mvn clean install'
       }
     }
-    stage('Pushing Image') {
-      environment {
-               registryCredential = 'dckr_pat_pa6YV_ytqkAMJ-OChAx8tjRqc28'
-           }
-      steps{
-        script {
-          docker.withRegistry( 'https://registry.hub.docker.com', registryCredential ) {
-            dockerImage.push("1.0")
-          }
+    stage('Build docker image'){
+        steps{
+            script{
+                sh 'docker build -t 250122/testdocker .'
+            }
         }
-      }
     }
+
+    stage('Push image to Hub'){
+        steps{
+            script{
+//                withCredentials([string(credentialsId: 'dockerhub-pwd', variable: 'dockerhubpwd')]) {
+//                 sh 'docker login -u 250122 -p ${dockerhubpwd}'
+//                 }
+               sh 'docker login -u 250122 -p Unlock12321@'
+               sh 'docker push 250122/testdocker'
+            }
+        }
+    }
+
+//     stage('Pushing Image') {
+//       environment {
+//                registryCredential = 'dckr_pat_pa6YV_ytqkAMJ-OChAx8tjRqc28'
+//            }
+//       steps{
+//         script {
+//           docker.withRegistry( 'https://registry.hub.docker.com', registryCredential ) {
+//             dockerImage.push("1.0")
+//           }
+//         }
+//       }
+//     }
     stage('Deploy Java Spring boot app to K8s') {
       steps {
         script {
