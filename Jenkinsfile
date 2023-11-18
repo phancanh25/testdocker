@@ -1,6 +1,6 @@
 pipeline {
   environment {
-    dockerimagename = "250122/testdocker"
+//     dockerimagename = "250122/testdocker"
     dockerImage = ""
   }
   agent any
@@ -13,7 +13,8 @@ pipeline {
     stage('Build image') {
       steps{
         script {
-          dockerImage = docker.build dockerimagename
+          sh 'docker build -t 250122/testdocker:1.0 .'
+//           dockerImage = docker.build dockerimagename
         }
       }
     }
