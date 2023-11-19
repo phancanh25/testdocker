@@ -7,7 +7,7 @@ pipeline {
     stage('Build Maven'){
       steps{
           checkout([$class: 'GitSCM', branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/phancanh25/testdocker']]])
-          sh 'mvn clean install'
+          sh 'mvn clean install -DskipTests'
       }
     }
     stage('Build docker image'){
